@@ -104,6 +104,28 @@ def get_employee_name_id(id):
 		frappe.throw(_("No employee has this identity: ") + str(id))
 
 
+def get_bio_filters():
+	return frappe.db.sql("""select filter_name, filter_type, filter_id, active from `tabBio Filter` where active = 1 """, 
+									as_dict=1)
+
+
+def check_bio_filter_type(filter_type):
+	is_not_exists = True
+	for filter in get_bio_filters():
+		if filter.filter_type == filter_type:
+			is_not_exists = False
+	return is_not_exists
+
+
+def check_bio_filters(filter_type, filter_id):
+	if check_bio_filter_type(filter_type):
+		return True
+	for filter in get_bio_filters():
+		if filter.filter_id == filter_id:
+			return True	
+	return False
+
+
 def check_master_enable():
 	enable_biometric_master = frappe.db.get_value("Biometric Settings", None, "enable_biometric_master") or 0
 	if int(enable_biometric_master) == 1:
@@ -426,50 +448,51 @@ def creat_transaction_log(data,tf_log_name,unique_list,repeated_list):
 		repeated = 0
 	
 	for transaction_row in data:
-		if check_transactions_id_is_unique(transaction_row["id"]):
-			unique += 1
-			unique_list.append(transaction_row["id"])
-			if not transaction_row["id"] or not transaction_row["punch_time"] or not transaction_row["punch_state"] or not transaction_row["emp"]:
-				status = "Error"
+		if check_bio_filters("Device", transaction_row["terminal_sn"]) and check_bio_filters("Area", transaction_row["area_alias"]):
+			if check_transactions_id_is_unique(transaction_row["id"]):
+				unique += 1
+				unique_list.append(transaction_row["id"])
+				if not transaction_row["id"] or not transaction_row["punch_time"] or not transaction_row["punch_state"] or not transaction_row["emp"]:
+					status = "Error"
+				else:
+					status = "Waiting"
+				transaction_log_doc = frappe.get_doc(dict(
+
+					doctype = "Transactions Log",
+					id = transaction_row["id"],
+					emp_code = transaction_row["emp_code"],
+					punch_time = transaction_row["punch_time"],
+					punch_state = transaction_row["punch_state"],
+					verify_type = transaction_row["verify_type"],
+					work_code = transaction_row["work_code"],
+					terminal_sn = transaction_row["terminal_sn"],
+					terminal_alias = transaction_row["terminal_alias"],
+					area_alias = transaction_row["area_alias"],
+					ilongituded = transaction_row["longitude"],
+					latitude = transaction_row["latitude"],
+					gps_location = transaction_row["gps_location"],
+					mobile = transaction_row["mobile"],
+					source = transaction_row["source"],
+					purpose = transaction_row["purpose"],
+					crc = transaction_row["crc"],
+					is_attendance = transaction_row["is_attendance"],
+					reserved = transaction_row["reserved"],
+					upload_time = transaction_row["upload_time"],
+					sync_status = transaction_row["sync_status"],
+					sync_statusid = transaction_row["sync_status"],
+					sync_time = transaction_row["sync_time"],
+					emp = transaction_row["emp"],
+					terminal = transaction_row["terminal"],
+					transaction_fetch_log = tf_log_name,
+					status = status,
+
+				)).insert(ignore_permissions = True)
+				if transaction_log_doc:
+					frappe.flags.ignore_account_permission = True
+
 			else:
-				status = "Waiting"
-			transaction_log_doc = frappe.get_doc(dict(
-
-				doctype = "Transactions Log",
-				id = transaction_row["id"],
-				emp_code = transaction_row["emp_code"],
-				punch_time = transaction_row["punch_time"],
-				punch_state = transaction_row["punch_state"],
-				verify_type = transaction_row["verify_type"],
-				work_code = transaction_row["work_code"],
-				terminal_sn = transaction_row["terminal_sn"],
-				terminal_alias = transaction_row["terminal_alias"],
-				area_alias = transaction_row["area_alias"],
-				ilongituded = transaction_row["longitude"],
-				latitude = transaction_row["latitude"],
-				gps_location = transaction_row["gps_location"],
-				mobile = transaction_row["mobile"],
-				source = transaction_row["source"],
-				purpose = transaction_row["purpose"],
-				crc = transaction_row["crc"],
-				is_attendance = transaction_row["is_attendance"],
-				reserved = transaction_row["reserved"],
-				upload_time = transaction_row["upload_time"],
-				sync_status = transaction_row["sync_status"],
-				sync_statusid = transaction_row["sync_status"],
-				sync_time = transaction_row["sync_time"],
-				emp = transaction_row["emp"],
-				terminal = transaction_row["terminal"],
-				transaction_fetch_log = tf_log_name,
-				status = status,
-
-			)).insert(ignore_permissions = True)
-			if transaction_log_doc:
-				frappe.flags.ignore_account_permission = True
-
-		else:
-			repeated_list.append(transaction_row["id"])
-			repeated += 1
+				repeated_list.append(transaction_row["id"])
+				repeated += 1
 	
 	tf_log_doc.unique = unique
 	tf_log_doc.repeated = repeated

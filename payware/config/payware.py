@@ -82,6 +82,11 @@ def get_data():
 					"name": "Area",
 					"onboard": 0,
 				},
+				{
+					"type": "doctype",
+					"name": "Bio Filter",
+					"onboard": 0,
+				},
 			]
 		},
 		{

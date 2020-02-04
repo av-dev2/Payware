@@ -1,0 +1,79 @@
+{
+ "allow_rename": 1,
+ "autoname": "field:filter_name",
+ "creation": "2020-02-04 01:42:19.425687",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "filter_name",
+  "filter_type",
+  "column_break_3",
+  "filter_id",
+  "active"
+ ],
+ "fields": [
+  {
+   "fieldname": "filter_name",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "label": "Filter Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "description": "For Devices is \"terminal_sn\" and for Areas is \"area_alias\"",
+   "fieldname": "filter_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Filter ID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Active"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "filter_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Type",
+   "options": "\nArea\nDevice",
+   "reqd": 1
+  }
+ ],
+ "modified": "2020-02-04 15:48:54.942366",
+ "modified_by": "Administrator",
+ "module": "Payware",
+ "name": "Bio Filter",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
