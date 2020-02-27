@@ -6,9 +6,17 @@
  "engine": "InnoDB",
  "field_order": [
   "overtime_section",
-  "working_hours_per_month",
+  "enable_overtime",
+  "overtime_mode",
+  "base_day",
+  "round_total",
+  "column_break_2",
+  "max_daily",
+  "max_weekly",
+  "max_monthly",
   "column_break_4",
   "ot_module",
+  "working_hours_per_month",
   "account_settings_section",
   "default_account_for_additional_component_cash_journal",
   "biometric_attendace_section",
@@ -138,10 +146,58 @@
    "fieldname": "enable_biometric_attendance",
    "fieldtype": "Check",
    "label": "Enable Biometric Attendance"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "overtime_mode",
+   "fieldtype": "Select",
+   "label": "Overtime Mode",
+   "options": "Checkout Time\nWorking Hours"
+  },
+  {
+   "default": "0",
+   "fieldname": "max_daily",
+   "fieldtype": "Int",
+   "label": "Maximum Daily Overtime"
+  },
+  {
+   "default": "0",
+   "fieldname": "max_weekly",
+   "fieldtype": "Int",
+   "label": "Maximum Weekly Overtime"
+  },
+  {
+   "default": "0",
+   "fieldname": "max_monthly",
+   "fieldtype": "Int",
+   "label": "Maximum Monthly Overtime"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_overtime",
+   "fieldtype": "Check",
+   "label": "Enable Overtime"
+  },
+  {
+   "default": "0",
+   "fieldname": "base_day",
+   "fieldtype": "Select",
+   "label": "Overtime Calculation Base Day",
+   "options": "0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28"
+  },
+  {
+   "default": "0",
+   "description": "The value should be between [0, 1]",
+   "fieldname": "round_total",
+   "fieldtype": "Float",
+   "label": "Round Total Overtime on"
   }
  ],
  "issingle": 1,
- "modified": "2020-01-13 21:58:00.613547",
+ "modified": "2020-02-27 15:42:57.393821",
  "modified_by": "Administrator",
  "module": "Payware",
  "name": "Payware Settings",
