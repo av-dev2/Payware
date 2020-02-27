@@ -64,38 +64,45 @@ class PaywareSettings(Document):
 
 
 
-	def get_enable_overtime(self):
-		if not self.enable_overtime:
-			self.enable_overtime = 0
-		self.enable_overtime = int(self.enable_overtime)
-		if self.enable_overtime == 1 :
-			return True
-		else:
-			return False
+def get_enable_overtime():
+	doc = frappe.get_single("Payware Settings")
+	if not doc.enable_overtime:
+		doc.enable_overtime = 0
+	doc.enable_overtime = int(doc.enable_overtime)
+	if doc.enable_overtime == 1 :
+		return True
+	else:
+		return False
 
 
-	def get_overtime_mode(self):
-		if not self.overtime_mode:
-			frappe.throw(_("Pleas Set Overtime Mode!"))
-		else :
-			return self.overtime_mode
+def get_overtime_mode():
+	doc = frappe.get_single("Payware Settings")
+	if not doc.overtime_mode:
+		frappe.throw(_("Pleas Set Overtime Mode!"))
+	else :
+		return doc.overtime_mode
 
 
-	def get_base_day(self):
-		return int(self.base_day)
+def get_base_day():
+	doc = frappe.get_single("Payware Settings")
+	return (doc.base_day)
 
 
-	def get_round_total(self):
-		return self.round_total
+def get_round_total():
+	doc = frappe.get_single("Payware Settings")
+	return doc.round_total
 
 
-	def get_max_daily(self):
-		return self.max_daily
+def get_max_daily():
+	doc = frappe.get_single("Payware Settings")
+	return doc.max_daily
 
 
-	def get_max_weekly(self):
-		return self.max_weekly
+def get_max_weekly():
+	doc = frappe.get_single("Payware Settings")
+	return doc.max_weekly
 
 
-	def get_max_monthly(self):
-		return self.max_monthly
+def get_max_monthly(self):
+	doc = frappe.get_single("Payware Settings")
+	return doc.max_monthly

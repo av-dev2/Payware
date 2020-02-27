@@ -112,6 +112,9 @@ doc_events = {
 	"Employee": {
 		"validate": "payware.payware.doctype.biometric_settings.biometric_settings.check_employee_bio_info"
 	},
+	"Attendance": {
+		"onload": "payware.payware.overtime_hook.calculate_overtime"
+	},
 }
 
 # Scheduled Tasks
