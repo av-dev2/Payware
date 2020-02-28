@@ -16,6 +16,7 @@ class PaywareSettings(Document):
 		self.validate_max_weekly()
 		self.validate_max_monthly()
 		self.validate_enable_overtime()
+		self.validate_min_overtime()
 
 
 	def validate_round_total(self):
@@ -63,46 +64,75 @@ class PaywareSettings(Document):
 			self.enable_overtime = 0
 
 
+	def validate_min_overtime(self):
+		if not self.min_overtime:
+			self.min_overtime = 0
+		if self.min_overtime < 0 or self.min_overtime > 1:
+			frappe.throw(_("Minimum Overtime Per Day value should be between [0, 1]"))
+
 
 def get_enable_overtime():
-	doc = frappe.get_single("Payware Settings")
-	if not doc.enable_overtime:
-		doc.enable_overtime = 0
-	doc.enable_overtime = int(doc.enable_overtime)
-	if doc.enable_overtime == 1 :
+	val = frappe.db.get_value("Payware Settings", None, "enable_overtime")
+	if not val:
+		return False
+	val = int(val)
+	if val == 1 :
 		return True
 	else:
 		return False
 
 
 def get_overtime_mode():
-	doc = frappe.get_single("Payware Settings")
-	if not doc.overtime_mode:
+	val = frappe.db.get_value("Payware Settings", None, "overtime_mode")
+	if not val:
 		frappe.throw(_("Pleas Set Overtime Mode!"))
 	else :
-		return doc.overtime_mode
+		return val
 
 
 def get_base_day():
-	doc = frappe.get_single("Payware Settings")
-	return (doc.base_day)
+	val = frappe.db.get_value("Payware Settings", None, "base_day")
+	if not val:
+		return 0
+	else :
+		return val
 
 
 def get_round_total():
-	doc = frappe.get_single("Payware Settings")
-	return doc.round_total
+	val = frappe.db.get_value("Payware Settings", None, "round_total")
+	if not val:
+		return 0
+	else :
+		return val
 
 
 def get_max_daily():
-	doc = frappe.get_single("Payware Settings")
-	return doc.max_daily
+	val = frappe.db.get_value("Payware Settings", None, "max_daily")
+	if not val:
+		return 0
+	else :
+		return val
 
 
 def get_max_weekly():
-	doc = frappe.get_single("Payware Settings")
-	return doc.max_weekly
+	val = frappe.db.get_value("Payware Settings", None, "max_weekly")
+	if not val:
+		return 0
+	else :
+		return val
 
 
 def get_max_monthly(self):
-	doc = frappe.get_single("Payware Settings")
-	return doc.max_monthly
+	val = frappe.db.get_value("Payware Settings", None, "max_monthly")
+	if not val:
+		return 0
+	else :
+		return val
+
+
+def get_min_overtime(self):
+	val = frappe.db.get_value("Payware Settings", None, "min_overtime")
+	if not val:
+		return 0
+	else :
+		return val

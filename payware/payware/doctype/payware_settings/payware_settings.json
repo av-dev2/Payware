@@ -19,6 +19,7 @@
   "max_monthly",
   "column_break_4",
   "working_hours_per_month",
+  "min_overtime",
   "account_settings_section",
   "default_account_for_additional_component_cash_journal",
   "biometric_attendace_section",
@@ -161,18 +162,21 @@
   },
   {
    "default": "0",
+   "description": "Hourly",
    "fieldname": "max_daily",
    "fieldtype": "Int",
    "label": "Maximum Daily Overtime"
   },
   {
    "default": "0",
+   "description": "Hourly",
    "fieldname": "max_weekly",
    "fieldtype": "Int",
    "label": "Maximum Weekly Overtime"
   },
   {
    "default": "0",
+   "description": "Hourly",
    "fieldname": "max_monthly",
    "fieldtype": "Int",
    "label": "Maximum Monthly Overtime"
@@ -204,10 +208,16 @@
   {
    "fieldname": "column_break_3",
    "fieldtype": "Column Break"
+  },
+  {
+   "description": "Hourly value should be between [0, 1]",
+   "fieldname": "min_overtime",
+   "fieldtype": "Float",
+   "label": "Minimum Overtime Per Day"
   }
  ],
  "issingle": 1,
- "modified": "2020-02-27 18:32:38.075893",
+ "modified": "2020-02-28 15:03:15.034716",
  "modified_by": "Administrator",
  "module": "Payware",
  "name": "Payware Settings",

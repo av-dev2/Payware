@@ -11,9 +11,15 @@ from payware.payware.doctype.payware_settings import payware_settings
 from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
 
 
-
+def validate_min_overtime(overtime):
+    if overtime >= payware_settings.get_min_overtime():
+        return overtime
+    else:
+        return payware_settings.get_min_overtime()
 
 def validate_daily_overtime(overtime):
+    if payware_settings.get_max_daily() == 0:
+        return overtime
     if overtime <= payware_settings.get_max_daily():
         return overtime
     else:
@@ -21,11 +27,15 @@ def validate_daily_overtime(overtime):
 
 
 def validate_weekly_overtime(emp_name, overtime,date):
-	start_week_date = get_first_day_of_week(date)
+    if payware_settings.get_max_weekly() == 0:
+        return overtime
+    start_week_date = get_first_day_of_week(date)
 
 
 def validate_monthly_overtime(emp_name, overtime,date):
-	start_month_date = get_first_day(date)
+    if payware_settings.get_max_monthly() == 0:
+        return overtime
+    start_month_date = get_first_day(date)
 
 	
 def validate_maximum_overtime_for_employee(emp_name, overtime,date):
@@ -67,7 +77,8 @@ def get_chekin_time(doctype,docname):
 def calculate_overtime(doc, method):
     if not payware_settings.get_enable_overtime() :
         return
-
+    if frappe.db.get_value("Shift Type", doc.shift, "determine_check_in_and_check_out") != 'Strictly based on Log Type in Employee Checkin':
+        return
     overtime = 0
     holiday = is_holiday(doc.employee, doc.attendance_date)
     start_time = frappe.db.get_value("Shift Type", doc.shift, "start_time")
@@ -75,6 +86,7 @@ def calculate_overtime(doc, method):
     shift_duration = time_diff_in_hour(start_time, end_time)
 
     if payware_settings.get_overtime_mode() == "Checkout Time":
+        frappe.msgprint("Checkout Time")
         employee_checkout_time=get_chekout_time(doc.doctype,doc.name)
         if not employee_checkout_time:
             return
@@ -98,6 +110,7 @@ def calculate_overtime(doc, method):
             # doc.overtime_holidays = overtime
 
     elif payware_settings.get_overtime_mode() == "Working Hours":
+        frappe.msgprint("Working Hours")
 
         if doc.working_hours and doc.working_hours>=shift_duration:
             overtime = flt(doc.working_hours - shift_duration, 2)
