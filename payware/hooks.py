@@ -113,7 +113,8 @@ doc_events = {
 		"validate": "payware.payware.doctype.biometric_settings.biometric_settings.check_employee_bio_info"
 	},
 	"Attendance": {
-		"onload": "payware.payware.overtime_hook.calculate_overtime"
+		"onload": "payware.payware.overtime_hook.calculate_overtime",
+		"validate": "payware.payware.overtime_hook.calculate_overtime"
 	},
 }
 

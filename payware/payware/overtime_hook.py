@@ -58,7 +58,7 @@ def validate_monthly_overtime(emp_name, overtime,date):
 
 
 def get_sum_overtime(emp_name,start_date,end_date):
-    frappe.msgprint(str(emp_name)+" "+str(start_date)+" "+str(end_date))
+    # frappe.msgprint(str(emp_name)+" "+str(start_date)+" "+str(end_date))
     query = """select sum(overtime_normal) as overtime_normal, sum(overtime_holidays) as overtime_holidays
 		from `tabAttendance` where
 		attendance_date between %(from_date)s and %(to_date)s
@@ -123,7 +123,7 @@ def calculate_overtime(doc, method):
     shift_duration = time_diff_in_hour(start_time, end_time)
 
     if payware_settings.get_overtime_mode() == "Checkout Time":
-        frappe.msgprint("Checkout Time")
+        # frappe.msgprint("Checkout Time")
         employee_checkout_time=get_chekout_time(doc.doctype,doc.name)
         if not employee_checkout_time:
             return
@@ -140,24 +140,24 @@ def calculate_overtime(doc, method):
             return
         overtime = validate_maximum_overtime_for_employee(doc.employee, overtime, doc.attendance_date)
         if not holiday:
-            frappe.msgprint("overtime_normal" +" "+ str(overtime))
-            # doc.overtime_normal = overtime
+            # frappe.msgprint("overtime_normal" +" "+ str(overtime))
+            doc.overtime_normal = overtime
         else:
-            frappe.msgprint("overtime_holidays" +" "+ str(overtime))
-            # doc.overtime_holidays = overtime
+            # frappe.msgprint("overtime_holidays" +" "+ str(overtime))
+            doc.overtime_holidays = overtime
 
     elif payware_settings.get_overtime_mode() == "Working Hours":
-        frappe.msgprint("Working Hours")
+        # frappe.msgprint("Working Hours")
 
         if doc.working_hours and doc.working_hours>=shift_duration:
             overtime = flt(doc.working_hours - shift_duration, 2)
             overtime = validate_maximum_overtime_for_employee(doc.employee, overtime, doc.attendance_date)
             if not holiday:
-                frappe.msgprint("overtime_normal" +" "+ str(overtime))
-                # doc.overtime_normal = overtime
+                # frappe.msgprint("overtime_normal" +" "+ str(overtime))
+                doc.overtime_normal = overtime
             else:
-                frappe.msgprint("overtime_holidays" +" "+ str(overtime))
-                # doc.overtime_holidays = overtime
+                # frappe.msgprint("overtime_holidays" +" "+ str(overtime))
+                doc.overtime_holidays = overtime
             
 
 
