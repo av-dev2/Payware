@@ -15,7 +15,7 @@ def validate_min_overtime(overtime):
     if overtime >= payware_settings.get_min_overtime():
         return overtime
     else:
-        return payware_settings.get_min_overtime()
+        return 0
 
 def validate_daily_overtime(overtime):
     if payware_settings.get_max_daily() == 0:
@@ -27,19 +27,56 @@ def validate_daily_overtime(overtime):
 
 
 def validate_weekly_overtime(emp_name, overtime,date):
-    if payware_settings.get_max_weekly() == 0:
+    max_weekly = payware_settings.get_max_weekly()
+    if max_weekly== 0:
         return overtime
     start_week_date = get_first_day_of_week(date)
+    sum_overtime = get_sum_overtime(emp_name,start_week_date,date)
+    full_overtime = overtime + sum_overtime
+    if full_overtime <= max_weekly:
+        return overtime
+    elif  sum_overtime <= max_weekly:
+        return max_weekly - sum_overtime
+    else:
+        return 0
+        
 
 
 def validate_monthly_overtime(emp_name, overtime,date):
-    if payware_settings.get_max_monthly() == 0:
+    max_monthly = payware_settings.get_max_monthly()
+    if max_monthly == 0:
         return overtime
     start_month_date = get_first_day(date)
+    sum_overtime = get_sum_overtime(emp_name,start_month_date,date)
+    full_overtime = overtime + sum_overtime
+    if full_overtime <= max_monthly:
+        return overtime
+    elif  sum_overtime <= max_monthly:
+        return max_monthly - sum_overtime
+    else:
+        return 0
+
+
+def get_sum_overtime(emp_name,start_date,end_date):
+    frappe.msgprint(str(emp_name)+" "+str(start_date)+" "+str(end_date))
+    query = """select sum(overtime_normal) as overtime_normal, sum(overtime_holidays) as overtime_holidays
+		from `tabAttendance` where
+		attendance_date between %(from_date)s and %(to_date)s
+		and docstatus < 2 and employee = %(employee)s"""
+    overtime_sums = frappe.db.sql(query, {"from_date":start_date, "to_date":end_date, "employee":emp_name}, as_dict=True)
+
+    sum_overtime_normal = overtime_sums[0]["overtime_normal"]
+    sum_overtime_holidays = overtime_sums[0]["overtime_holidays"]
+
+    return sum_overtime_normal + sum_overtime_holidays
 
 	
-def validate_maximum_overtime_for_employee(emp_name, overtime,date):
-	return True
+def validate_maximum_overtime_for_employee(emp_name, overtime, date):
+    overtime = validate_min_overtime(overtime)
+    overtime = validate_daily_overtime(overtime)
+    overtime = validate_weekly_overtime(emp_name, overtime, date)
+    overtime = validate_monthly_overtime(emp_name, overtime, date)
+    return overtime
 
 
 def time_diff_in_hour(start, end):
@@ -101,7 +138,7 @@ def calculate_overtime(doc, method):
 
         if overtime < 0:
             return
-
+        overtime = validate_maximum_overtime_for_employee(doc.employee, overtime, doc.attendance_date)
         if not holiday:
             frappe.msgprint("overtime_normal" +" "+ str(overtime))
             # doc.overtime_normal = overtime
@@ -114,7 +151,7 @@ def calculate_overtime(doc, method):
 
         if doc.working_hours and doc.working_hours>=shift_duration:
             overtime = flt(doc.working_hours - shift_duration, 2)
-            
+            overtime = validate_maximum_overtime_for_employee(doc.employee, overtime, doc.attendance_date)
             if not holiday:
                 frappe.msgprint("overtime_normal" +" "+ str(overtime))
                 # doc.overtime_normal = overtime

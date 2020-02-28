@@ -95,7 +95,7 @@ def get_base_day():
 	if not val:
 		return 0
 	else :
-		return val
+		return float(val)
 
 
 def get_round_total():
@@ -103,7 +103,7 @@ def get_round_total():
 	if not val:
 		return 0
 	else :
-		return val
+		return float(val)
 
 
 def get_max_daily():
@@ -111,7 +111,7 @@ def get_max_daily():
 	if not val:
 		return 0
 	else :
-		return val
+		return int(val)
 
 
 def get_max_weekly():
@@ -119,20 +119,20 @@ def get_max_weekly():
 	if not val:
 		return 0
 	else :
-		return val
+		return int(val)
 
 
-def get_max_monthly(self):
+def get_max_monthly():
 	val = frappe.db.get_value("Payware Settings", None, "max_monthly")
 	if not val:
 		return 0
 	else :
-		return val
+		return int(val)
 
 
-def get_min_overtime(self):
+def get_min_overtime():
 	val = frappe.db.get_value("Payware Settings", None, "min_overtime")
 	if not val:
 		return 0
 	else :
-		return val
+		return float(val)
