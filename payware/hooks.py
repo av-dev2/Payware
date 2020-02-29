@@ -97,7 +97,7 @@ doc_events = {
 	"Salary Slip": {
 		"on_submit": "payware.payware.utils.set_loan_paid",
 		"on_cancel": "payware.payware.utils.set_loan_paid",
-		"before_insert": ["payware.payware.salary_slip_hook.generate_component_in_salary_slip_insert",],
+		"before_insert": "payware.payware.salary_slip_hook.generate_component_in_salary_slip_insert",
 		"before_save": "payware.payware.salary_slip_hook.generate_component_in_salary_slip_update",
 		"validate": "payware.payware.overtime_hook.calculate_overtime_amount",
 		"onload": "payware.payware.overtime_hook.calculate_overtime_amount",

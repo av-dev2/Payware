@@ -65,8 +65,8 @@ def get_sum_overtime(emp_name,start_date,end_date):
 		and docstatus < 2 and employee = %(employee)s"""
     overtime_sums = frappe.db.sql(query, {"from_date":start_date, "to_date":end_date, "employee":emp_name}, as_dict=True)
 
-    sum_overtime_normal = overtime_sums[0]["overtime_normal"]
-    sum_overtime_holidays = overtime_sums[0]["overtime_holidays"]
+    sum_overtime_normal = overtime_sums[0]["overtime_normal"] or 0
+    sum_overtime_holidays = overtime_sums[0]["overtime_holidays"] or 0
 
     return {"sum_overtime_normal":sum_overtime_normal , "sum_overtime_holidays":sum_overtime_holidays}
 
@@ -202,6 +202,7 @@ def calculate_overtime_amount(doc, method):
             overtime_amount = geet_overtime_amount(doc.employee,doc.start_date,doc.end_date,component_doc,base)
             earning_row.amount = overtime_amount
     frappe.db.commit()
+    doc.calculate_net_pay()
 
 
 def add_overtime_components(salary_slip_doc):
@@ -213,9 +214,9 @@ def add_overtime_components(salary_slip_doc):
             for component in salary_slip_doc.earnings :
                 if component.salary_component == component_doc.name:
                     exist = True
-                    frappe.msgprint("Salary Overtime Component IS Exist "+ str(component_doc.name))
+                    # frappe.msgprint("Salary Overtime Component IS Exist "+ str(component_doc.name))
             if exist == False:
-                frappe.msgprint("Salary Overtime Component NOT Exist "+ str(component_doc.name))
+                # frappe.msgprint("Salary Overtime Component NOT Exist "+ str(component_doc.name))
                 new = salary_slip_doc.append('earnings', {})
                 new.salary_component = earning_row.salary_component
                 new.abbr = earning_row.abbr
