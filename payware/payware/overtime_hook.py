@@ -1,12 +1,12 @@
 from __future__ import unicode_literals
-import json
+# import json
 import frappe
 from frappe.model.document import Document
-from dateutil.relativedelta import relativedelta
+from datetime import datetime
 from frappe.utils import get_first_day, getdate, flt, add_to_date, rounded, time_diff_in_hours ,get_first_day_of_week
 from frappe import _
 from erpnext.hr.doctype.employee.employee import is_holiday
-from calendar import monthrange
+# from calendar import monthrange
 from payware.payware.doctype.payware_settings import payware_settings
 from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
 
@@ -32,7 +32,7 @@ def validate_weekly_overtime(emp_name, overtime,date):
         return overtime
     start_week_date = get_first_day_of_week(date)
     sum_overtime = get_sum_overtime(emp_name,start_week_date,date)
-    full_overtime = overtime + sum_overtime
+    full_overtime = overtime + sum_overtime["sum_overtime_holidays"] + sum_overtime["sum_overtime_normal"]
     if full_overtime <= max_weekly:
         return overtime
     elif  sum_overtime <= max_weekly:
@@ -48,7 +48,7 @@ def validate_monthly_overtime(emp_name, overtime,date):
         return overtime
     start_month_date = get_first_day(date)
     sum_overtime = get_sum_overtime(emp_name,start_month_date,date)
-    full_overtime = overtime + sum_overtime
+    full_overtime = overtime + sum_overtime["sum_overtime_holidays"] + sum_overtime["sum_overtime_normal"]
     if full_overtime <= max_monthly:
         return overtime
     elif  sum_overtime <= max_monthly:
@@ -68,7 +68,7 @@ def get_sum_overtime(emp_name,start_date,end_date):
     sum_overtime_normal = overtime_sums[0]["overtime_normal"]
     sum_overtime_holidays = overtime_sums[0]["overtime_holidays"]
 
-    return sum_overtime_normal + sum_overtime_holidays
+    return {"sum_overtime_normal":sum_overtime_normal , "sum_overtime_holidays":sum_overtime_holidays}
 
 	
 def validate_maximum_overtime_for_employee(emp_name, overtime, date):
@@ -158,11 +158,66 @@ def calculate_overtime(doc, method):
             else:
                 # frappe.msgprint("overtime_holidays" +" "+ str(overtime))
                 doc.overtime_holidays = overtime
-            
 
 
+# def get_shift_duration(shift_name):
+#     start_time = frappe.db.get_value("Shift Type", shift_name, "start_time")
+#     end_time = frappe.db.get_value("Shift Type", shift_name, "end_time")
+#     shift_duration = time_diff_in_hour(start_time, end_time)
+#     return shift_duration
 
 
+def geet_overtime_amount(emp_name,start_date,end_date,salary_component_doc,base):
+    sum_overtime = get_sum_overtime(emp_name,start_date,end_date)
+    sum_overtime_holidays = sum_overtime["sum_overtime_holidays"] 
+    sum_overtime_normal = sum_overtime["sum_overtime_normal"]
+    # frappe.msgprint("Base = "+str(base))
+    # frappe.msgprint("sum_overtime_normal = "+str(sum_overtime_normal)+ "/ sum_overtime_holidays = " + str(sum_overtime_holidays))
+    working_hours_per_month = payware_settings.get_working_hours_per_month()
+    if salary_component_doc.based_on_hourly_rate and salary_component_doc.is_overtime and salary_component_doc.overtime_type == "Overtime Normal":
+	    overtime_amount = (float(base)/ float(working_hours_per_month)) *  float(sum_overtime_normal) * (float(salary_component_doc.hourly_rate) / 100)
+    elif salary_component_doc.based_on_hourly_rate and salary_component_doc.is_overtime and salary_component_doc.overtime_type == "Overtime Holidaysl":
+        overtime_amount = (float(base)/ float(working_hours_per_month)) *  float(sum_overtime_holidays) * (float(salary_component_doc.hourly_rate) / 100)
+    else:
+        overtime_amount = 0
+    # frappe.msgprint("overtime_amount = "+str(overtime_amount))
+    return overtime_amount
 
 
+@frappe.whitelist()
+def calculate_overtime_amount(doc, method):
+    if not payware_settings.get_enable_overtime() :
+        return
+    if doc.docstatus != 0:
+        return
+    add_overtime_components(doc)
+    for component in doc.earnings:
+        if str(component.salary_component).upper() == "BASIC":
+            base = component.amount / doc.payment_days * doc.total_working_days
+        if base == None:
+            frappe.throw("Basic Component not Found")
+    for earning_row in doc.earnings :
+        component_doc = frappe.get_doc("Salary Component", earning_row.salary_component)
+        if component_doc and component_doc.is_overtime and component_doc.based_on_hourly_rate:
+            overtime_amount = geet_overtime_amount(doc.employee,doc.start_date,doc.end_date,component_doc,base)
+            earning_row.amount = overtime_amount
+    frappe.db.commit()
 
+
+def add_overtime_components(salary_slip_doc):
+    salary_structure = frappe.get_doc("Salary Structure", salary_slip_doc.salary_structure)
+    for earning_row in salary_structure.earnings:
+        exist = False
+        component_doc = frappe.get_doc("Salary Component", earning_row.salary_component)
+        if component_doc and component_doc.is_overtime and component_doc.based_on_hourly_rate:
+            for component in salary_slip_doc.earnings :
+                if component.salary_component == component_doc.name:
+                    exist = True
+                    frappe.msgprint("Salary Overtime Component IS Exist "+ str(component_doc.name))
+            if exist == False:
+                frappe.msgprint("Salary Overtime Component NOT Exist "+ str(component_doc.name))
+                new = salary_slip_doc.append('earnings', {})
+                new.salary_component = earning_row.salary_component
+                new.abbr = earning_row.abbr
+                frappe.db.commit()
+                

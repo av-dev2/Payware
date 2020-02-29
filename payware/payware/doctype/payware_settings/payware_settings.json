@@ -210,14 +210,14 @@
    "fieldtype": "Column Break"
   },
   {
-   "description": "Hourly value should be between [0, 1]",
+   "description": "Hourly value should be between [0, 2]",
    "fieldname": "min_overtime",
    "fieldtype": "Float",
    "label": "Minimum Overtime Per Day"
   }
  ],
  "issingle": 1,
- "modified": "2020-02-28 15:03:15.034716",
+ "modified": "2020-02-28 23:29:42.737834",
  "modified_by": "Administrator",
  "module": "Payware",
  "name": "Payware Settings",

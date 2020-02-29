@@ -97,8 +97,10 @@ doc_events = {
 	"Salary Slip": {
 		"on_submit": "payware.payware.utils.set_loan_paid",
 		"on_cancel": "payware.payware.utils.set_loan_paid",
-		"before_insert": "payware.payware.salary_slip_hook.generate_component_in_salary_slip_insert",
-		"before_save": "payware.payware.salary_slip_hook.generate_component_in_salary_slip_update"
+		"before_insert": ["payware.payware.salary_slip_hook.generate_component_in_salary_slip_insert",],
+		"before_save": "payware.payware.salary_slip_hook.generate_component_in_salary_slip_update",
+		"validate": "payware.payware.overtime_hook.calculate_overtime_amount",
+		"onload": "payware.payware.overtime_hook.calculate_overtime_amount",
 	},
 	"Loan Repayment Not From Salary": {
 		"on_submit": "payware.payware.utils.create_loan_repayment_jv",
@@ -113,7 +115,7 @@ doc_events = {
 		"validate": "payware.payware.doctype.biometric_settings.biometric_settings.check_employee_bio_info"
 	},
 	"Attendance": {
-		"onload": "payware.payware.overtime_hook.calculate_overtime",
+		# "onload": "payware.payware.overtime_hook.calculate_overtime",
 		"validate": "payware.payware.overtime_hook.calculate_overtime"
 	},
 }

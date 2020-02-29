@@ -67,8 +67,16 @@ class PaywareSettings(Document):
 	def validate_min_overtime(self):
 		if not self.min_overtime:
 			self.min_overtime = 0
-		if self.min_overtime < 0 or self.min_overtime > 1:
-			frappe.throw(_("Minimum Overtime Per Day value should be between [0, 1]"))
+		if self.min_overtime < 0 or self.min_overtime > 2:
+			frappe.throw(_("Minimum Overtime Per Day value should be between [0, 2]"))
+
+
+	def validate_working_hours_per_month(self):
+		if not self.working_hours_per_month:
+			self.working_hours_per_month = 0
+		self.working_hours_per_month = int(self.working_hours_per_month)
+		if self.working_hours_per_month < 0 or self.working_hours_per_month > 400:
+			frappe.throw(_("Working Hours per Month value should be between [0, 400]"))
 
 
 def get_enable_overtime():
@@ -132,6 +140,13 @@ def get_max_monthly():
 
 def get_min_overtime():
 	val = frappe.db.get_value("Payware Settings", None, "min_overtime")
+	if not val:
+		return 0
+	else :
+		return float(val)
+
+def get_working_hours_per_month():
+	val = frappe.db.get_value("Payware Settings", None, "working_hours_per_month")
 	if not val:
 		return 0
 	else :
