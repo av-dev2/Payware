@@ -185,7 +185,7 @@ def geet_overtime_amount(emp_name,start_date,end_date,salary_component_doc,base)
 
 
 @frappe.whitelist()
-def calculate_overtime_amount(doc, method):
+def calculate_overtime_amount(doc, method=None):
     if not payware_settings.get_enable_overtime() :
         return
     if doc.docstatus != 0:
