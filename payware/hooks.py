@@ -139,7 +139,7 @@ fixtures = [
 		"Payroll Entry-end_date-in_list_view",
 		"Salary Structure Assignment-employee-in_list_view",
 		"Salary Structure Assignment-base-in_list_view",
-		"Salary Slip-default_print_format"
+		# "Salary Slip-default_print_format"
 	)]]},
 ]
 
