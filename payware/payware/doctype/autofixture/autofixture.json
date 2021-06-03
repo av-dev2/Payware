@@ -1,0 +1,56 @@
+{
+ "creation": "2021-06-03 22:04:54.425568",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "old_doc",
+  "filter",
+  "app",
+  "new_doc"
+ ],
+ "fields": [
+  {
+   "fieldname": "old_doc",
+   "fieldtype": "Data",
+   "label": "Old Doc"
+  },
+  {
+   "fieldname": "filter",
+   "fieldtype": "Data",
+   "label": "Filter"
+  },
+  {
+   "fieldname": "app",
+   "fieldtype": "Data",
+   "label": "App"
+  },
+  {
+   "fieldname": "new_doc",
+   "fieldtype": "Data",
+   "label": "New  Doc"
+  }
+ ],
+ "modified": "2021-06-03 22:04:54.425568",
+ "modified_by": "Administrator",
+ "module": "Payware",
+ "name": "AutoFixture",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
