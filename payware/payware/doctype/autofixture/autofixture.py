@@ -23,9 +23,10 @@ class AutoFixture(Document):
 					for fil in filters:
 						for filter in fil[2]:
 							new_dc = filter.split("-")[0]
-							auto_fixture = frappe.new_doc("doc")
-							auto_fixture.old_doc = old_dc
-							auto_fixture.filter = filter
-							auto_fixture.app = app
-							auto_fixture.new_doc = new_dc
-							auto_fixture.save()
+							autofixture = frappe.new_doc("doc")
+							autofixture.old_doc = old_dc
+							autofixture.filter = filter
+							autofixture.app = app
+							autofixture.new_doc = new_dc
+							autofixture.save()
+							#return auto_fixture
