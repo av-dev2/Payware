@@ -4,34 +4,26 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "old_doc",
-  "filter",
-  "app",
-  "new_doc"
+  "doctype_name",
+  "fixture"
  ],
  "fields": [
   {
-   "fieldname": "old_doc",
+   "fieldname": "doctype_name",
    "fieldtype": "Data",
-   "label": "Old Doc"
+   "in_list_view": 1,
+   "label": "Doctype Name",
+   "reqd": 1
   },
   {
-   "fieldname": "filter",
-   "fieldtype": "Data",
-   "label": "Filter"
-  },
-  {
-   "fieldname": "app",
-   "fieldtype": "Data",
-   "label": "App"
-  },
-  {
-   "fieldname": "new_doc",
-   "fieldtype": "Data",
-   "label": "New  Doc"
+   "fieldname": "fixture",
+   "fieldtype": "Table",
+   "label": "Fixture",
+   "options": "Fixtures",
+   "reqd": 1
   }
  ],
- "modified": "2021-06-03 22:04:54.425568",
+ "modified": "2021-06-04 11:26:25.734883",
  "modified_by": "Administrator",
  "module": "Payware",
  "name": "AutoFixture",
