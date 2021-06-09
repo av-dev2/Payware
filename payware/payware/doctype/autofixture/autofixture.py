@@ -9,25 +9,32 @@ from frappe.utils import fixtures
 
 
 class AutoFixture(Document):
-	def validate(self):
-		frappe.msgprint("Validate")
-		for identified_app in frappe.get_installed_apps():
-			for hook in frappe.get_hooks("fixtures", app_name=identified_app):
-				filters = None
-				if isinstance(hook, dict):
-					doctype_name = hook.get("doctype")
-					filters = hook.get("filters")
-					for fil in filters:
-						for filter in list(fil[2]):
-							fixture_doctype = filter.split("-")[0]
+    pass
 
-							doc = frappe.new_doc("Fixtures")
 
-							doc.doctype_name = doctype_name
-							doc.filter = filter
-							doc.identified_app = identified_app
-							doc.fixture_doctype = fixture_doctype
-							doc.save()
-							doc.submit()
+def on_reload():
+    #frappe.db.sql("DELETE FROM `tabAuFix` WHERE name != 'a1' ")
+    frappe.db.commit()
+    for app_name in frappe.get_installed_apps():
+        for fixture_doc in frappe.get_hooks("fixtures", app_name=app_name):
+            filters = None
+            if isinstance(fixture_doc, dict):
+                doctype_name = fixture_doc.get("doctype")
+                filters = fixture_doc.get("filters")
+                for fil in filters:
+                    for filter in list(fil[2]):
+                        custom_doctype = filter.split("-")[0]
+                        #identified_fieldname = filter.split("-")[1]
+                        #property_type = filter.split("-")[2]
 
-	#print(validate())
+                        doc = frappe.new_doc("AutoFixture")
+                        doc.doctype_name = doctype_name
+                        doc.filter = filter
+                        doc.identified_app = app_name
+                        doc.custom_doctype = custom_doctype
+                        #doc.identified_fieldname = identified_fieldname
+                        #doc.property_type = property_type
+                        doc.insert(ignore_if_duplicate=True)
+
+
+on_reload()

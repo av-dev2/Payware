@@ -1,30 +1,40 @@
 {
+ "actions": [],
  "creation": "2021-06-03 22:04:54.425568",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "doctype_name",
-  "fixture"
+  "filter",
+  "identified_app",
+  "custom_doctype"
  ],
  "fields": [
   {
    "fieldname": "doctype_name",
    "fieldtype": "Select",
    "in_list_view": 1,
-   "label": "Doctype Name",
-   "options": "\nCustom Field\nProperty Stter",
-   "reqd": 1
+   "label": "Doctype Name"
   },
   {
-   "fieldname": "fixture",
-   "fieldtype": "Table",
-   "label": "Fixture",
-   "options": "Fixtures",
-   "reqd": 1
+   "fieldname": "filter",
+   "fieldtype": "Data",
+   "label": "Filter"
+  },
+  {
+   "fieldname": "identified_app",
+   "fieldtype": "Data",
+   "label": "Identified App"
+  },
+  {
+   "fieldname": "custom_doctype",
+   "fieldtype": "Data",
+   "label": "Custom Doctype"
   }
  ],
- "modified": "2021-06-06 21:31:31.018000",
+ "links": [],
+ "modified": "2021-06-08 22:09:53.605141",
  "modified_by": "Administrator",
  "module": "Payware",
  "name": "AutoFixture",
